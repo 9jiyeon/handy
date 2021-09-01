@@ -1,0 +1,6 @@
+framework module Pods_handyTests {
+  umbrella header "Pods-handyTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
