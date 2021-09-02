@@ -13,6 +13,7 @@ enum MonthlyMode {
 }
 
 class MonthlyViewController: UIViewController {
+    let todoManager = TodoManager.shared
     
     // MARK: IBOutlet
     @IBOutlet weak var calendarView: FSCalendar!
@@ -39,15 +40,20 @@ class MonthlyViewController: UIViewController {
             } else {
                 print("photo mode")
             }
+            calendarView.reloadData()
         }
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
         configureView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        // 이벤트를 나타내기 위해 reload
+        calendarView.reloadData()
     }
     
     func configureView() {
@@ -56,7 +62,10 @@ class MonthlyViewController: UIViewController {
         calendarView.dataSource = self
         calendarView.calendarHeaderView.isHidden = true
         calendarView.appearance.todayColor = .init(red: 218/255, green: 217/255, blue: 255/255, alpha: 1.0)
-        calendarView.appearance.selectionColor = .init(red: 213/255, green: 213/255, blue: 213/255, alpha: 1.0)
+        calendarView.appearance.titleSelectionColor = .black
+        calendarView.appearance.selectionColor = nil
+        calendarView.appearance.eventDefaultColor = .init(red: 102/255, green: 051/255, blue: 153/255, alpha: 1.0)
+        calendarView.appearance.eventSelectionColor = .init(red: 102/255, green: 051/255, blue: 153/255, alpha: 1.0)
         calendarView.appearance.weekdayTextColor = .black
         for (index, weekdayLabel) in calendarView.calendarWeekdayView.weekdayLabels.enumerated() {
             weekdayLabel.text = daysOfWeek[index]
@@ -67,11 +76,11 @@ class MonthlyViewController: UIViewController {
     }
     
     func changePage(_ isPrev: Bool) {
-        let calengar = Calendar.current
+        let calendar = Calendar.current
         var dateComponents = DateComponents()
         dateComponents.month = isPrev ? -1 : 1
         
-        currentPage = calengar.date(byAdding: dateComponents, to: currentPage ?? Date())
+        currentPage = calendar.date(byAdding: dateComponents, to: currentPage ?? Date())
         calendarView.setCurrentPage(currentPage!, animated: true)
     }
     
@@ -82,6 +91,10 @@ class MonthlyViewController: UIViewController {
     
     @IBAction func nextBtnClicked(_ sender: UIButton) {
         changePage(false)
+    }
+    
+    @IBAction func todayBtnClicked(_ sender: UIButton) {
+        calendarView.setCurrentPage(calendarView.today!, animated: true)
     }
     
     @IBAction func changeMonthlyMode(_ sender: UIButton) {
@@ -100,6 +113,17 @@ class MonthlyViewController: UIViewController {
 }
 
 extension MonthlyViewController: FSCalendarDelegate, FSCalendarDataSource {
+    func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
+        if mode == .todo {
+            if let todoList = todoManager.todoLists[date] {
+                return todoList.todos.count
+            }
+        }
+        
+        return 0
+    }
+    
+    // 날짜 선택 시 해당 날짜의 Daily View로 이동
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         if mode == .todo {
             guard let todoVC = self.storyboard?.instantiateViewController(identifier: "ToDoViewController") as? ToDoViewController else { return }
