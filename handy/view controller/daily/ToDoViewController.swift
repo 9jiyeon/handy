@@ -56,7 +56,7 @@ class ToDoViewController: UIViewController {
     
     private lazy var dateFormatter: DateFormatter = {
         let df = DateFormatter()
-        df.dateFormat = "MM.dd."
+        df.dateFormat = "MM.dd. eee"
         return df
     }()
 
