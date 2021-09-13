@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 
+/* To Do - 할 일의 그룹을 설정할 때 사용 */
 enum ToDoGroup {
     case red, yellow, blue
     

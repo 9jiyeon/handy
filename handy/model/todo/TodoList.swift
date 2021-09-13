@@ -7,6 +7,7 @@
 
 import Foundation
 
+/* Calendar의 Date가 하나 이하로 가질 수 있는 객체 */
 class TodoList {
     var todos: [Todo] = []
     var notCompletedMark = 0
@@ -57,7 +58,6 @@ class TodoList {
                 return todo
             }
         }
-        
         return nil
     }
     

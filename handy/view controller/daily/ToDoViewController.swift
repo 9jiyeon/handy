@@ -62,6 +62,7 @@ class ToDoViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // date에 해당되는 todo list가 없다면 생성, 있다면 그것을 사용
         if let todoList = todoManager.todoLists[date!] {
             self.todoList = todoList
         } else {
@@ -71,6 +72,7 @@ class ToDoViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        // add keyboard observer
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -81,7 +83,7 @@ class ToDoViewController: UIViewController {
         } else {
             todoManager.todoLists[date!] = todoList
         }
-        
+        // remove keyboard observer
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -89,17 +91,13 @@ class ToDoViewController: UIViewController {
     func configureView() {
         // date label
         dateLabel.text = dateFormatter.string(from: date!)
-        
         // table view
         showTodoView.delegate = self
         showTodoView.dataSource = self
-        
         // add todo view
         addTodoView.isHidden = true
-        
         // text field
         addTextField.delegate = self
-        
         // group stack view
         groupStackView.frame.origin.x = 0
         groupStackView.isHidden = true
@@ -124,7 +122,7 @@ class ToDoViewController: UIViewController {
         }
     }
     
-    // MARK: Obj
+    // MARK: obj
     @objc func keyboardShow(noti: NSNotification) {
         if let keyboardFrame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardSize = keyboardFrame.cgRectValue.height
@@ -162,10 +160,6 @@ extension ToDoViewController: UITableViewDelegate, UITableViewDataSource {
 
 /* text field delegate */
 extension ToDoViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        // 키보드 업 부르자
-    }
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField.text!.isEmpty {
             mode = .show

@@ -52,7 +52,7 @@ class MonthlyViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        // 이벤트를 나타내기 위해 reload
+        // 변경 사항(이벤트 생성, 삭제 등)을 반영하기 위해 reload
         calendarView.reloadData()
     }
     
@@ -75,7 +75,7 @@ class MonthlyViewController: UIViewController {
         yearLabel.text = date.components(separatedBy: " ")[1]
     }
     
-    func changePage(_ isPrev: Bool) {
+    func changePage(isPrev: Bool) {
         let calendar = Calendar.current
         var dateComponents = DateComponents()
         dateComponents.month = isPrev ? -1 : 1
@@ -86,11 +86,11 @@ class MonthlyViewController: UIViewController {
     
     // MARK: IBAction
     @IBAction func prevBtnClicked(_ sender: UIButton) {
-        changePage(true)
+        changePage(isPrev: true)
     }
     
     @IBAction func nextBtnClicked(_ sender: UIButton) {
-        changePage(false)
+        changePage(isPrev: false)
     }
     
     @IBAction func todayBtnClicked(_ sender: UIButton) {
@@ -109,7 +109,6 @@ class MonthlyViewController: UIViewController {
             break
         }
     }
-
 }
 
 extension MonthlyViewController: FSCalendarDelegate, FSCalendarDataSource {
@@ -136,6 +135,7 @@ extension MonthlyViewController: FSCalendarDelegate, FSCalendarDataSource {
         }
     }
     
+    // 달이 바뀌었을 때 month label, year label 내용 변경
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let date = dateFormatter.string(from: calendar.currentPage)
         monthLabel.text = date.components(separatedBy: " ")[0]

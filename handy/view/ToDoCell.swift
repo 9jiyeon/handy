@@ -19,8 +19,8 @@ class ToDoCell: UITableViewCell {
     @IBOutlet weak var modifyTextField: UITextField!
     @IBOutlet weak var taskLabel: UILabel!
     
+    var delegate: ToDoCellDelegate? // delegate는 ToDoViewController에서 셀을 반환할 때 설정
     var todoList: TodoList?
-    var delegate: ToDoCellDelegate?
     var identifier: UUID?
     var group: ToDoGroup? {
         didSet {
@@ -76,12 +76,13 @@ class ToDoCell: UITableViewCell {
 
 extension ToDoCell: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
+        // return 키 종료가 아닐 때(다른 text field로 포커스 이동 등) 변경 사항 저장
         if reason == .committed {
             if !textField.text!.isEmpty {
                 todoList!.update(id: identifier!, group!, textField.text!)
             }
             endModifing()
-            // UI Update
+            // UI Update - 다른 text field의 포커스를 잃는 것을 막기 위해 변경된 열만 업데이트
             if let upperView = self.superview as? UITableView {
                 let index = todoList!.getTodoIndex(id: identifier!)
                 upperView.reloadRows(at: [[0, index]], with: .none)

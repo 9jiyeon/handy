@@ -8,10 +8,10 @@
 import Foundation
 
 class Todo {
-    var identifier = UUID()
-    var isCompleted: Bool
-    var group: ToDoGroup
-    var task: String
+    var identifier = UUID() // Todo 객체의 고유 ID
+    var isCompleted: Bool   // 완료 상태
+    var group: ToDoGroup    // 그룹
+    var task: String        // 할 일
     
     init(isCompleted: Bool = false, group: ToDoGroup, task: String) {
         self.isCompleted = isCompleted
